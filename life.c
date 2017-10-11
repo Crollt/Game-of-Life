@@ -40,7 +40,11 @@ int main(int argc, const char *argv[]) {
                 run_game(&grid);
             }
         }
+        if (ch == (int)'x') {
+            break;
+        }
     }
+    free_grid(&grid);
     /* ------------------------------ */
     getch();
     endwin();
@@ -142,6 +146,8 @@ void run_game(Grid* grid) {
             grid->matrix[i][j] = copy->matrix[i][j]; 
         }   
     }
+    free_grid(copy);
+    free(copy);
 }
 
 int count_adjacent(Grid* grid, int i, int j) {
@@ -169,3 +175,9 @@ int count_adjacent(Grid* grid, int i, int j) {
     return adjacent;
 }
 
+void free_grid(Grid* grid) {
+    for (int i = 0; i < grid->size_x; i++) {
+        free(grid->matrix[i]);
+    }
+    free(grid->matrix);
+}
