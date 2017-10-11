@@ -16,3 +16,4 @@ void run_game(Grid*);
 int count_adjacent(Grid*, int, int);
 Grid* deep_copy_grid(Grid*);
 void read_file(Grid*, char*);
+void free_grid(Grid*);
