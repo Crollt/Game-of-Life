@@ -1,31 +1,70 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ncurses.h>
-#include <unistd.h>
 #include "life.h"
 
 int main(int argc, const char *argv[]) {
+    float per_second = 0.1;
+    char * file_name;
+
     initscr();
     /* raw(); */
     keypad(stdscr, TRUE);
     noecho();
+    nodelay(stdscr, 1);
     curs_set(0);
     /* ------------------------------ */
     Grid grid;
-    init_grid(&grid, 50, 150);
+    init_grid(&grid, 50, 100);
+    if (argv[1]) {
+        read_file(&grid, argv[1]);
+    } else {
+        read_file(&grid, "default.txt");
+    }
+    /* make_glider(&grid, 5, 50); */
 
-    make_glider(&grid, 5, 50);
-
+    int ch;
+    bool paused = false;
     while (1) {
-        print_grid(&grid);
-        run_game(&grid);
-        usleep(500000);
+        ch = getch();
+        if (ch == (int)'p' && !paused) {
+            paused = true;
+        } else if (ch == (int)'p' && paused) {
+            paused = false;
+        }
+        if (!paused) {
+            print_grid(&grid);
+            run_game(&grid);
+            int time = 1000000 * per_second;
+            usleep(time);
+        } else {
+            if (ch == KEY_RIGHT) {
+                print_grid(&grid);
+                run_game(&grid);
+            }
+        }
     }
     /* ------------------------------ */
     getch();
     endwin();
     return 0;
+}
+
+void read_file(Grid* grid, char* file_name) {
+    FILE *file;
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    file = fopen(file_name, "r");
+    if (file) {
+        int j = 0;
+        char buf[] = "X";
+        while((read = getline(&line, &len, file) != -1)) {
+            for (int i = 0; i < strlen(line); i++) {
+                buf[0] = line[i];
+                grid->matrix[j][i] = atoi(buf);
+            }
+            j++;
+        }
+    }
 }
 
 void print_grid(Grid* grid) {

@@ -1,3 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ncurses.h>
+#include <unistd.h>
+
 typedef struct {
     int size_x, size_y;
     int** matrix;
@@ -9,3 +15,4 @@ void make_glider(Grid*, int, int);
 void run_game(Grid*);
 int count_adjacent(Grid*, int, int);
 Grid* deep_copy_grid(Grid*);
+void read_file(Grid*, char*);
